@@ -53,3 +53,13 @@ def test_name_setter():
     assert item._Item__name == "LongNameString"
     item.name = "ShortName"
     assert item._Item__name == "ShortName"
+
+
+def test_repr():
+    item1 = Item('Смартфон', 10000, 20)
+    assert repr(item1) == "Item('Смартфон', 10000, 20)"
+
+
+def test_str():
+    item1 = Item('Смартфон', 10000, 20)
+    assert str(item1) == 'Смартфон'
