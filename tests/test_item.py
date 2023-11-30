@@ -1,6 +1,5 @@
-"""Здесь надо написать тесты с использованием pytest для модуля item."""
 import pytest
-from src.paths import Csv_path
+from src.paths import Csv_path, Csv_test, No_file
 from src.item import Item
 
 
@@ -63,3 +62,20 @@ def test_repr():
 def test_str():
     item1 = Item('Смартфон', 10000, 20)
     assert str(item1) == 'Смартфон'
+
+
+def test_instantiate_from_csv():
+    path = Csv_path
+    assert Item.instantiate_from_csv_test(path) == True
+
+
+def test_instantiate_from_csv_file_not_found():
+    # Проверяем обработку исключения FileNotFoundError
+    path = No_file
+    assert Item.instantiate_from_csv_test(path) == 'Отсутствует файл invalid_items_test.csv'
+
+
+def test_instantiate_from_csv_invalid_data():
+    # Проверяем обработку исключения InstantiateCSVError при некорректных данных в CSV-файле
+    path = Csv_test
+    assert Item.instantiate_from_csv_test(path) == 'Ошибка при создании объектов из CSV'
