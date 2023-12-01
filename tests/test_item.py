@@ -1,6 +1,6 @@
 import pytest
 from src.paths import Csv_path, Csv_test, No_file
-from src.item import Item
+from src.item import Item, InstantiateCSVError
 
 
 @pytest.fixture
@@ -66,16 +66,20 @@ def test_str():
 
 def test_instantiate_from_csv():
     path = Csv_path
-    assert Item.instantiate_from_csv_test(path) == True
+    assert Item.instantiate_from_csv(path) == True
 
 
 def test_instantiate_from_csv_file_not_found():
     # Проверяем обработку исключения FileNotFoundError
     path = No_file
-    assert Item.instantiate_from_csv_test(path) == 'Отсутствует файл invalid_items_test.csv'
+    with pytest.raises(FileNotFoundError) as e:
+        Item.instantiate_from_csv(path)
+    assert str(e.value) == 'Отсутствует файл items.csv'
 
 
 def test_instantiate_from_csv_invalid_data():
     # Проверяем обработку исключения InstantiateCSVError при некорректных данных в CSV-файле
     path = Csv_test
-    assert Item.instantiate_from_csv_test(path) == 'Ошибка при создании объектов из CSV'
+    with pytest.raises(InstantiateCSVError) as e:
+        Item.instantiate_from_csv(path)
+    assert str(e.value) == 'Ошибка при создании объектов из CSV'

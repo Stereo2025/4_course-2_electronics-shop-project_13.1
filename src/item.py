@@ -2,8 +2,7 @@ import csv
 
 
 class InstantiateCSVError(Exception):
-    def __init__(self):
-        self.message = 'Ошибка при создании объектов из CSV'
+    pass
 
 
 class Item:
@@ -46,32 +45,22 @@ class Item:
 
     @classmethod
     def instantiate_from_csv(cls, path):
-
-        if Item.instantiate_from_csv_test(path) is True:
-            Item.all = []
-
-            with open(path, 'r', encoding="windows-1251") as csv_file:
-                csv_data: csv.DictReader = csv.DictReader(csv_file)
-                for line in csv_data:
-                    cls(line['name'], float(line['price']), int(line['quantity']))
-
-    @staticmethod
-    def string_to_number(value):
-        return int(float(value))
-
-    @staticmethod
-    def instantiate_from_csv_test(path):
-
+        cls.all.clear()
         try:
             with open(path, 'r', encoding="windows-1251") as csv_file:
                 csv_data: csv.DictReader = csv.DictReader(csv_file)
                 csv_data_list = list(csv_data)
                 for line in csv_data_list:
-                    if (line.get('name') and line.get('price') and line.get('quantity')) in ['', None]:
-                        raise InstantiateCSVError
+                    if len(line) < 3 or (line.get('name') and line.get('price') and line.get('quantity')) in ['', None]:
+                        raise InstantiateCSVError('Ошибка при создании объектов из CSV')
+
         except FileNotFoundError:
-            return 'Отсутствует файл invalid_items_test.csv'
-        except InstantiateCSVError as exeption:
-            return exeption.message
+            raise FileNotFoundError("Отсутствует файл items.csv")
+        except InstantiateCSVError as exception:
+            raise InstantiateCSVError(exception.args[0])
         else:
             return True
+
+    @staticmethod
+    def string_to_number(value):
+        return int(float(value))
